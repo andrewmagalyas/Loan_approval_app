@@ -1,8 +1,6 @@
 import os
-
 import joblib
 from django.conf import settings
-
 from .forms import LoanApplicationForm
 
 # Визначення шляху до моделі
