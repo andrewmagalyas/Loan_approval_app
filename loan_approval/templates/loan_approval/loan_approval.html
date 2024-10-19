@@ -1,0 +1,88 @@
+<form method="POST" action="{% url 'loan_approval' %}">
+    {% csrf_token %}
+    <div>
+        <label for="id_int_rate">Процентна ставка за позикою <span style="color: red;">*</span></label>
+        {{ form.int_rate }}
+        {% if form.int_rate.errors %}
+            <div style="color: red;">{{ form.int_rate.errors }}</div>
+        {% endif %}
+    </div>
+    <div>
+        <label for="id_installment">Місячний платіж <span style="color: red;">*</span></label>
+        {{ form.installment }}
+        {% if form.installment.errors %}
+            <div style="color: red;">{{ form.installment.errors }}</div>
+        {% endif %}
+    </div>
+    <div>
+        <label for="id_log_annual_inc">Логарифм річного доходу <span style="color: red;">*</span></label>
+        {{ form.log_annual_inc }}
+        {% if form.log_annual_inc.errors %}
+            <div style="color: red;">{{ form.log_annual_inc.errors }}</div>
+        {% endif %}
+    </div>
+    <div>
+        <label for="id_dti">Відношення боргу до доходу <span style="color: red;">*</span></label>
+        {{ form.dti }}
+        {% if form.dti.errors %}
+            <div style="color: red;">{{ form.dti.errors }}</div>
+        {% endif %}
+    </div>
+    <div>
+        <label for="id_fico">Кредитний рейтинг позичальника <span style="color: red;">*</span></label>
+        {{ form.fico }}
+        {% if form.fico.errors %}
+            <div style="color: red;">{{ form.fico.errors }}</div>
+        {% endif %}
+    </div>
+    <div>
+        <label for="id_days_with_cr_line">Дні з кредитною лінією</label>
+        {{ form.days_with_cr_line }}
+        {% if form.days_with_cr_line.errors %}
+            <div style="color: red;">{{ form.days_with_cr_line.errors }}</div>
+        {% endif %}
+    </div>
+    <div>
+        <label for="id_revol_bal">Обертовий баланс</label>
+        {{ form.revol_bal }}
+        {% if form.revol_bal.errors %}
+            <div style="color: red;">{{ form.revol_bal.errors }}</div>
+        {% endif %}
+    </div>
+    <div>
+        <label for="id_revol_util">Використання обертового кредиту</label>
+        {{ form.revol_util }}
+        {% if form.revol_util.errors %}
+            <div style="color: red;">{{ form.revol_util.errors }}</div>
+        {% endif %}
+    </div>
+    <div>
+        <label for="id_inq_last_6mths">Запити за останні 6 місяців <span style="color: red;">*</span></label>
+        {{ form.inq_last_6mths }}
+        {% if form.inq_last_6mths.errors %}
+            <div style="color: red;">{{ form.inq_last_6mths.errors }}</div>
+        {% endif %}
+    </div>
+    <div>
+        <label for="id_delinq_2yrs">Прострочки за останні 2 роки <span style="color: red;">*</span></label>
+        {{ form.delinq_2yrs }}
+        {% if form.delinq_2yrs.errors %}
+            <div style="color: red;">{{ form.delinq_2yrs.errors }}</div>
+        {% endif %}
+    </div>
+    <div>
+        <label for="id_pub_rec">Публічні записи</label>
+        {{ form.pub_rec }}
+        {% if form.pub_rec.errors %}
+            <div style="color: red;">{{ form.pub_rec.errors }}</div>
+        {% endif %}
+    </div>
+    <div>
+        <label for="id_purpose">Мета позики <span style="color: red;">*</span></label>
+        {{ form.purpose }}
+        {% if form.purpose.errors %}
+            <div style="color: red;">{{ form.purpose.errors }}</div>
+        {% endif %}
+    </div>
+    <button type="submit">Відправити</button>
+</form>

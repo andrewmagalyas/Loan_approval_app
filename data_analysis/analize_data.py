@@ -11,12 +11,6 @@ import joblib
 # Завантаження даних
 df = pd.read_csv('loan_data.csv')
 
-# Вибір тільки числових стовпців для обчислення кореляції
-numerical_df = df.select_dtypes(include=['number'])
-
-# Обчислення кореляційної матриці
-corr_matrix = numerical_df.corr()
-
 # Аналіз даних
 print("Перевірка колонок:")
 print(df.columns)
@@ -52,7 +46,7 @@ categorical_features = ['purpose']
 preprocessor = ColumnTransformer(
     transformers=[
         ('num', StandardScaler(), numerical_features),
-        ('cat', OneHotEncoder(), categorical_features)
+        ('cat', OneHotEncoder(drop='first'), categorical_features)
     ]
 )
 
@@ -80,11 +74,25 @@ print(f"\nТочність на тестових даних: {grid_search.score(
 joblib.dump(grid_search.best_estimator_, 'loan_approval_model.pkl')
 print("\nМодель збережено у 'loan_approval_model.pkl'")
 
+# Отримання закодованих даних для аналізу кореляцій
+X_preprocessed = preprocessor.fit_transform(X)
+df_preprocessed = pd.DataFrame(X_preprocessed, columns=numerical_features +
+                               list(preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features)))
+
+# Додавання цільової змінної для кореляційного аналізу
+df_preprocessed['not.fully.paid'] = y.values
+
+# Матриця кореляцій
+plt.figure(figsize=(10, 6))
+corr_matrix = df_preprocessed.corr()
+sns.heatmap(corr_matrix, annot=True, fmt='.2f', cmap='coolwarm', center=0)
+plt.title('Матриця кореляцій')
+plt.tight_layout()
+plt.show()
+
 # Важливість ознак
 feature_importances = grid_search.best_estimator_.named_steps['classifier'].feature_importances_
-feature_names = numerical_features + list(grid_search.best_estimator_.named_steps['preprocessor']
-                                          .named_transformers_['cat']
-                                          .get_feature_names_out(categorical_features))
+feature_names = numerical_features + list(preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features))
 
 # Створення DataFrame для важливості ознак
 importance_df = pd.DataFrame({'Feature': feature_names, 'Importance': feature_importances})
@@ -113,12 +121,4 @@ for i, col in enumerate(numerical_features, 1):
     sns.boxplot(x=df['not.fully.paid'], y=df[col])
     plt.title(f'{col} vs not.fully.paid')
     plt.tight_layout()
-plt.show()
-
-# Матриця кореляцій
-plt.figure(figsize=(10, 6))
-corr_matrix = df.corr()
-sns.heatmap(corr_matrix, annot=True, fmt='.2f', cmap='coolwarm', center=0)
-plt.title('Матриця кореляцій')
-plt.tight_layout()
 plt.show()
