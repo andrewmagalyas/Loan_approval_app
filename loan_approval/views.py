@@ -1,11 +1,14 @@
-from django.shortcuts import render
-from .forms import LoanApprovalForm
 import joblib
-import numpy as np
+import pandas as pd
+from django.shortcuts import render
+
+from .forms import LoanApprovalForm
 
 # Завантаження моделі
 model = joblib.load('data_analysis/loan_approval_model.pkl')
 
+# Завантаження моделі
+model = joblib.load('data_analysis/loan_approval_model.pkl')
 
 def loan_approval_view(request):
     result = None
@@ -25,26 +28,21 @@ def loan_approval_view(request):
                 form.cleaned_data['inq_last_6mths'],
                 form.cleaned_data['delinq_2yrs'],
                 form.cleaned_data['pub_rec'],
+                form.cleaned_data['purpose']
             ]
-            purpose = form.cleaned_data['purpose']
-
-            # Виконуємо кодування цільової змінної purpose (враховуючи OneHotEncoding)
-            purpose_mapping = {
-                'debt_consolidation': 0,
-                'credit_card': 1,
-                'home_improvement': 2,
-                'major_purchase': 3,
-                'small_business': 4,
-                'other': 5
-            }
-            purpose_encoded = [0] * len(purpose_mapping)
-            purpose_encoded[purpose_mapping[purpose]] = 1
-            data.extend(purpose_encoded)
 
             # Прогноз за допомогою моделі
-            prediction = model.predict([data])[0]
+            # Оскільки дані подаються як список, перетворимо їх на DataFrame
+            data_df = pd.DataFrame([data], columns=[
+                'int.rate', 'installment', 'log.annual.inc', 'dti', 'fico',
+                'days.with.cr.line', 'revol.bal', 'revol.util',
+                'inq.last.6mths', 'delinq.2yrs', 'pub.rec', 'purpose'
+            ])
+
+            prediction = model.predict(data_df)[0]
             result = 'Approved' if prediction == 0 else 'Not Approved'
     else:
         form = LoanApprovalForm()
 
     return render(request, 'loan_approval/loan_approval.html', {'form': form, 'result': result})
+

@@ -85,4 +85,8 @@
         {% endif %}
     </div>
     <button type="submit">Відправити</button>
+    {% if result %}
+    <p>Результат: {{ result }}</p>
+{% endif %}
 </form>
+

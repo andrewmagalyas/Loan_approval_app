@@ -46,7 +46,7 @@ categorical_features = ['purpose']
 preprocessor = ColumnTransformer(
     transformers=[
         ('num', StandardScaler(), numerical_features),
-        ('cat', OneHotEncoder(drop='first'), categorical_features)
+        ('cat', OneHotEncoder(drop='first', handle_unknown='ignore'), categorical_features)
     ]
 )
 
