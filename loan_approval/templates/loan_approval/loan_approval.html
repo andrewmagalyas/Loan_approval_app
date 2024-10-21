@@ -1,35 +1,39 @@
 <form method="POST" action="{% url 'loan_approval' %}">
     {% csrf_token %}
     <div>
-        <label for="id_int_rate">Процентна ставка за позикою <span style="color: red;">*</span></label>
+        <a href="{% url 'home' %}" class="button">Home</a> |
+        <a href="{% url 'logout' %}" class="button">Logout</a>
+    </div>
+    <div>
+        <label for="id_int_rate">Процентна ставка за позикою</label>
         {{ form.int_rate }}
         {% if form.int_rate.errors %}
             <div style="color: red;">{{ form.int_rate.errors }}</div>
         {% endif %}
     </div>
     <div>
-        <label for="id_installment">Місячний платіж <span style="color: red;">*</span></label>
+        <label for="id_installment">Місячний платіж</label>
         {{ form.installment }}
         {% if form.installment.errors %}
             <div style="color: red;">{{ form.installment.errors }}</div>
         {% endif %}
     </div>
     <div>
-        <label for="id_log_annual_inc">Логарифм річного доходу <span style="color: red;">*</span></label>
+        <label for="id_log_annual_inc">Логарифм річного доходу</label>
         {{ form.log_annual_inc }}
         {% if form.log_annual_inc.errors %}
             <div style="color: red;">{{ form.log_annual_inc.errors }}</div>
         {% endif %}
     </div>
     <div>
-        <label for="id_dti">Відношення боргу до доходу <span style="color: red;">*</span></label>
+        <label for="id_dti">Відношення боргу до доходу</label>
         {{ form.dti }}
         {% if form.dti.errors %}
             <div style="color: red;">{{ form.dti.errors }}</div>
         {% endif %}
     </div>
     <div>
-        <label for="id_fico">Кредитний рейтинг позичальника <span style="color: red;">*</span></label>
+        <label for="id_fico">Кредитний рейтинг позичальника</label>
         {{ form.fico }}
         {% if form.fico.errors %}
             <div style="color: red;">{{ form.fico.errors }}</div>
@@ -57,14 +61,14 @@
         {% endif %}
     </div>
     <div>
-        <label for="id_inq_last_6mths">Запити за останні 6 місяців <span style="color: red;">*</span></label>
+        <label for="id_inq_last_6mths">Запити за останні 6 місяців</label>
         {{ form.inq_last_6mths }}
         {% if form.inq_last_6mths.errors %}
             <div style="color: red;">{{ form.inq_last_6mths.errors }}</div>
         {% endif %}
     </div>
     <div>
-        <label for="id_delinq_2yrs">Прострочки за останні 2 роки <span style="color: red;">*</span></label>
+        <label for="id_delinq_2yrs">Прострочки за останні 2 роки</label>
         {{ form.delinq_2yrs }}
         {% if form.delinq_2yrs.errors %}
             <div style="color: red;">{{ form.delinq_2yrs.errors }}</div>
@@ -78,7 +82,7 @@
         {% endif %}
     </div>
     <div>
-        <label for="id_purpose">Мета позики <span style="color: red;">*</span></label>
+        <label for="id_purpose">Мета позики</label>
         {{ form.purpose }}
         {% if form.purpose.errors %}
             <div style="color: red;">{{ form.purpose.errors }}</div>

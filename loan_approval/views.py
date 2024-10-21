@@ -42,15 +42,12 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home')  # Redirect to a home page after login
+            return redirect('loan_approval')  # Redirect to a home page after login
         else:
             return render(request, 'registration/login.html', {'error': 'Invalid credentials'})
 
     return render(request, 'registration/login.html')
 
-
-# Завантаження моделі
-model = joblib.load('data_analysis/loan_approval_model.pkl')
 
 # Завантаження моделі
 model = joblib.load('data_analysis/loan_approval_model.pkl')
@@ -85,7 +82,7 @@ def loan_approval_view(request):
             ])
 
             prediction = model.predict(data_df)[0]
-            result = 'Approved' if prediction == 0 else 'Not Approved'
+            result = 'Схвалено' if prediction == 0 else 'Не схвалено'
     else:
         form = LoanApprovalForm()
 

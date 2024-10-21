@@ -2,7 +2,7 @@ from django import forms
 
 class LoanApprovalForm(forms.Form):
     int_rate = forms.FloatField(
-        label='Процентна ставка за позикою <span style="color: red;">*</span>',
+        label='Процентна ставка за позикою',
         widget=forms.TextInput(attrs={'placeholder': 'Наприклад, 5.5 для 5.5%'}),
     )
     installment = forms.FloatField(
@@ -35,15 +35,15 @@ class LoanApprovalForm(forms.Form):
     )
     inq_last_6mths = forms.IntegerField(
         label='Запити за останні 6 місяців <span style="color: red;">*</span>',
-        widget=forms.TextInput(attrs={'placeholder': 'Цілісне число, наприклад, 2'}),
+        widget=forms.TextInput(attrs={'placeholder': 'Ціле число, наприклад, 2'}),
     )
     delinq_2yrs = forms.IntegerField(
         label='Прострочки за останні 2 роки <span style="color: red;">*</span>',
-        widget=forms.TextInput(attrs={'placeholder': 'Цілісне число, наприклад, 1'}),
+        widget=forms.TextInput(attrs={'placeholder': 'Ціле число, наприклад, 1'}),
     )
     pub_rec = forms.IntegerField(
         label='Публічні записи',
-        widget=forms.TextInput(attrs={'placeholder': 'Цілісне число, наприклад, 0'}),
+        widget=forms.TextInput(attrs={'placeholder': 'Ціле число, наприклад, 0'}),
     )
     purpose = forms.ChoiceField(
         choices=[
