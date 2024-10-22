@@ -52,7 +52,7 @@ class LoanApprovalForm(forms.Form):
             ('home_improvement', 'Home Improvement'),
             ('major_purchase', 'Major Purchase'),
             ('small_business', 'Small Business'),
-            ('other', 'Other')
+            ('all_other', 'Other')
         ],
         label='Мета позики <span style="color: red;">*</span>',
     )

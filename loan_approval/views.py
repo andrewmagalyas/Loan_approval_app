@@ -74,7 +74,6 @@ def loan_approval_view(request):
             ]
 
             # Прогноз за допомогою моделі
-            # Оскільки дані подаються як список, перетворимо їх на DataFrame
             data_df = pd.DataFrame([data], columns=[
                 'int.rate', 'installment', 'log.annual.inc', 'dti', 'fico',
                 'days.with.cr.line', 'revol.bal', 'revol.util',

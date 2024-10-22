@@ -8,8 +8,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
 import joblib
 
-
-
 # Завантаження даних
 df = pd.read_csv('loan_data.csv')
 
