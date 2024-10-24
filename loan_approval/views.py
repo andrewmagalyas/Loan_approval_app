@@ -10,9 +10,26 @@ from .forms import LoanApprovalForm
 
 @login_required
 def home(request):
+    """
+    Відображає домашню сторінку для зареєстрованих користувачів.
+
+    Parameters:
+    request (HttpRequest): Об'єкт запиту.
+
+    Returns:
+    HttpResponse: Відповідь з рендерингом шаблону 'home.html'.
+    """
     return render(request, 'home.html')
 
+
 class UserRegistrationForm(forms.ModelForm):
+    """
+    Форма для реєстрації нового користувача, включаючи поле для пароля.
+
+    Attributes:
+    password (CharField): Поле для введення пароля.
+    Meta: Вказує модель та поля, що використовуються у формі.
+    """
     password = forms.CharField(widget=forms.PasswordInput)
 
     class Meta:
@@ -21,28 +38,47 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 def register(request):
+    """
+    Обробляє реєстрацію користувача. Якщо форма валідна, користувач реєструється і аутентифікується.
+
+    Parameters:
+    request (HttpRequest): Об'єкт запиту.
+
+    Returns:
+    HttpResponse: Рендеринг форми реєстрації або редирект на сторінку схвалення позики.
+    """
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
+            raw_password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             messages.success(request, 'Registration successful.')
-            return redirect('loan_approval')  # Redirect to your loan approval page or home
+            return redirect('loan_approval')  # Редирект на сторінку схвалення позики або головну
     else:
         form = UserRegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
 
+
 def user_login(request):
+    """
+    Обробляє вхід користувача. Якщо облікові дані валідні, користувач входить у систему.
+
+    Parameters:
+    request (HttpRequest): Об'єкт запиту.
+
+    Returns:
+    HttpResponse: Рендеринг сторінки входу або редирект на сторінку схвалення позики.
+    """
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('loan_approval')  # Redirect to a home page after login
+            return redirect('loan_approval')  # Редирект на сторінку схвалення позики після входу
         else:
             return render(request, 'registration/login.html', {'error': 'Invalid credentials'})
 
@@ -52,7 +88,17 @@ def user_login(request):
 # Завантаження моделі
 model = joblib.load('data_analysis/loan_approval_model.pkl')
 
+
 def loan_approval_view(request):
+    """
+    Відображає форму для схвалення позики і обробляє прогноз моделі на основі введених даних.
+
+    Parameters:
+    request (HttpRequest): Об'єкт запиту.
+
+    Returns:
+    HttpResponse: Рендеринг сторінки 'loan_approval.html' з результатом схвалення або не схвалення.
+    """
     result = None
     if request.method == 'POST':
         form = LoanApprovalForm(request.POST)
@@ -86,5 +132,3 @@ def loan_approval_view(request):
         form = LoanApprovalForm()
 
     return render(request, 'loan_approval/loan_approval.html', {'form': form, 'result': result})
-
-
