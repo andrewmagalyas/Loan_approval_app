@@ -1,12 +1,14 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
 import joblib
+from data_analysis.visualization import (plot_correlation_matrix,
+                           plot_feature_importance,
+                           plot_numerical_distributions,
+                           plot_numerical_vs_target)
 
 # Завантаження даних
 df = pd.read_csv('loan_data.csv')
@@ -76,49 +78,26 @@ print("\nМодель збережено у 'loan_approval_model.pkl'")
 
 # Отримання закодованих даних для аналізу кореляцій
 X_preprocessed = preprocessor.fit_transform(X)
-df_preprocessed = pd.DataFrame(X_preprocessed, columns=numerical_features +
-                               list(preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features)))
+df_preprocessed = pd.DataFrame(X_preprocessed,
+                               columns=numerical_features +
+                                       list(preprocessor.named_transformers_['cat'].
+                                            get_feature_names_out(categorical_features)))
 
 # Додавання цільової змінної для кореляційного аналізу
 df_preprocessed['not.fully.paid'] = y.values
 
-# Матриця кореляцій
-plt.figure(figsize=(10, 6))
-corr_matrix = df_preprocessed.corr()
-sns.heatmap(corr_matrix, annot=True, fmt='.2f', cmap='coolwarm', center=0)
-plt.title('Матриця кореляцій')
-plt.tight_layout()
-plt.show()
 
 # Важливість ознак
 feature_importances = grid_search.best_estimator_.named_steps['classifier'].feature_importances_
-feature_names = numerical_features + list(preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features))
+feature_names = numerical_features + list(preprocessor.named_transformers_['cat'].
+                                          get_feature_names_out(categorical_features))
 
 # Створення DataFrame для важливості ознак
 importance_df = pd.DataFrame({'Feature': feature_names, 'Importance': feature_importances})
 importance_df = importance_df.sort_values(by='Importance', ascending=False)
 
 # Візуалізація важливості ознак
-plt.figure(figsize=(10, 6))
-sns.barplot(x='Importance', y='Feature', data=importance_df)
-plt.title('Важливість ознак')
-plt.tight_layout()
-plt.show()
-
-# Розподіл основних числових змінних
-plt.figure(figsize=(12, 8))
-for i, col in enumerate(numerical_features, 1):
-    plt.subplot(3, 4, i)
-    sns.histplot(df[col], kde=True)
-    plt.title(f'Розподіл {col}')
-    plt.tight_layout()
-plt.show()
-
-# Зв’язок між числовими змінними та цільовою змінною
-plt.figure(figsize=(12, 8))
-for i, col in enumerate(numerical_features, 1):
-    plt.subplot(3, 4, i)
-    sns.boxplot(x=df['not.fully.paid'], y=df[col])
-    plt.title(f'{col} vs not.fully.paid')
-    plt.tight_layout()
-plt.show()
+plot_correlation_matrix(df_preprocessed)
+plot_feature_importance(importance_df)
+plot_numerical_distributions(df, numerical_features)
+plot_numerical_vs_target(df, numerical_features)
