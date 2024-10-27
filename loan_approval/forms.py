@@ -1,5 +1,6 @@
 from django import forms
 
+
 class LoanApprovalForm(forms.Form):
     int_rate = forms.FloatField(
         label='Процентна ставка за позикою',

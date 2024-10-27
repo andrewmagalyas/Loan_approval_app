@@ -156,32 +156,31 @@ save_model(grid_search.best_estimator_, 'loan_approval_model.pkl')
 
 
 # Обробка даних для аналізу кореляцій
-def preprocess_for_analysis(pipeline, X, numerical_features, categorical_features, y):
+def preprocess_for_analysis(pipeline, X_train, X_test, numerical_features, categorical_features, y_train):
     """
-    Обробляє дані для аналізу кореляцій, використовуючи підготовлений ColumnTransformer.
-
-    Parameters:
-    pipeline (sklearn.pipeline.Pipeline): Pipeline, що містить підготовлений preprocessor.
-    X (pandas.DataFrame): Вхідні ознаки.
-    numerical_features (list): Числові ознаки.
-    categorical_features (list): Категоріальні ознаки.
-    y (pandas.Series): Цільова змінна.
-
-    Returns:
-    df_preprocessed (pandas.DataFrame): Оброблені дані з додаванням цільової змінної.
+    Обробляє тренувальні дані для аналізу кореляцій, використовуючи підготовлений ColumnTransformer.
     """
     preprocessor = pipeline.named_steps['preprocessor']  # Отримання preprocessor з pipeline
-    X_preprocessed = preprocessor.fit_transform(X)
-    df_preprocessed = pd.DataFrame(X_preprocessed,
-                                   columns=numerical_features +
-                                           list(preprocessor.named_transformers_['cat'].
-                                                get_feature_names_out(categorical_features)))
-    df_preprocessed['not.fully.paid'] = y.values
-    return df_preprocessed
+
+    # Використовуємо fit_transform для тренувальних даних
+    X_train_preprocessed = preprocessor.fit_transform(X_train)
+    # Transform для тестових даних, щоб уникнути витоку
+    X_test_preprocessed = preprocessor.transform(X_test)
+
+    # Створюємо DataFrame з обробленими тренувальними даними та ознаками
+    df_train_preprocessed = pd.DataFrame(X_train_preprocessed,
+                                         columns=numerical_features +
+                                                 list(preprocessor.named_transformers_['cat'].get_feature_names_out(
+                                                     categorical_features)))
+    df_train_preprocessed['not.fully.paid'] = y_train.values
+
+    return df_train_preprocessed, X_test_preprocessed
+
 
 # Виклик функції
-df_preprocessed = preprocess_for_analysis(grid_search.best_estimator_, X, numerical_features, categorical_features, y)
-
+df_train_preprocessed, X_test_preprocessed = preprocess_for_analysis(
+    grid_search.best_estimator_, X_train, X_test, numerical_features, categorical_features, y_train
+)
 
 
 # Важливість ознак
@@ -208,7 +207,7 @@ def compute_feature_importance(model, numerical_features, categorical_features):
 importance_df = compute_feature_importance(grid_search.best_estimator_, numerical_features, categorical_features)
 
 # Візуалізація важливості ознак
-plot_correlation_matrix(df_preprocessed)
+plot_correlation_matrix(df_train_preprocessed)
 plot_feature_importance(importance_df)
 plot_numerical_distributions(df, numerical_features)
 plot_numerical_vs_target(df, numerical_features)
