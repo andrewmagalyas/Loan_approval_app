@@ -1,4 +1,5 @@
 import pandas as pd
+import logging
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -10,6 +11,7 @@ from data_analysis.visualization import (plot_correlation_matrix,
                                          plot_numerical_distributions,
                                          plot_numerical_vs_target)
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Аналіз даних
 def analyze_data(df):
@@ -23,18 +25,18 @@ def analyze_data(df):
     Returns:
     None
     """
-    print("Перевірка колонок:")
-    print(df.columns)
-    print("\nПерші 5 записів:")
-    print(df.head())
-    print("\nІнформація про дані:")
-    print(df.info())
-    print("\nОпис даних:")
-    print(df.describe())
-    print("\nПеревірка на пропущені значення:")
-    print(df.isnull().sum())
-    print("\nРозподіл цільової змінної 'not.fully.paid':")
-    print(df['not.fully.paid'].value_counts())
+    logging.info("Перевірка колонок:")
+    logging.info(df.columns)
+    logging.info("\nПерші 5 записів:")
+    logging.info(df.head())
+    logging.info("\nІнформація про дані:")
+    logging.info(df.info())
+    logging.info("\nОпис даних:")
+    logging.info(df.describe())
+    logging.info("\nПеревірка на пропущені значення:")
+    logging.info(df.isnull().sum())
+    logging.info("\nРозподіл цільової змінної 'not.fully.paid':")
+    logging.info(df['not.fully.paid'].value_counts())
 
 
 # Розділення на ознаки та цільову змінну
@@ -115,7 +117,7 @@ def save_model(model, filename):
     None
     """
     joblib.dump(model, filename)
-    print(f"\nМодель збережено у '{filename}'")
+    logging.info(f"\nМодель збережено у '{filename}'")
 
 
 # Обробка даних для аналізу кореляцій
@@ -192,8 +194,8 @@ if __name__ == '__main__':
     grid_search = tune_model(pipeline, param_grid, X_train, y_train)
 
     # Виведення найкращих параметрів і точності моделі
-    print(f"\nНайкращі параметри: {grid_search.best_params_}")
-    print(f"\nТочність на тестових даних: {grid_search.score(X_test, y_test)}")
+    logging.info(f"\nНайкращі параметри: {grid_search.best_params_}")
+    logging.info(f"\nТочність на тестових даних: {grid_search.score(X_test, y_test)}")
 
     # Збереження моделі
     save_model(grid_search.best_estimator_, 'loan_approval_model.pkl')
