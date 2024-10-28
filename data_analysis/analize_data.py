@@ -10,9 +10,6 @@ from data_analysis.visualization import (plot_correlation_matrix,
                                          plot_numerical_distributions,
                                          plot_numerical_vs_target)
 
-# Завантаження даних
-df = pd.read_csv('loan_data.csv')
-
 
 # Аналіз даних
 def analyze_data(df):
@@ -40,10 +37,6 @@ def analyze_data(df):
     print(df['not.fully.paid'].value_counts())
 
 
-# Виклик функції для аналізу даних
-analyze_data(df)
-
-
 # Розділення на ознаки та цільову змінну
 def split_data(df, target_column):
     """
@@ -60,18 +53,6 @@ def split_data(df, target_column):
     X = df.drop(target_column, axis=1)
     y = df[target_column]
     return X, y
-
-
-X, y = split_data(df, 'not.fully.paid')
-
-# Розділення на тренувальні та тестові дані
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Визначення числових та категоріальних ознак
-numerical_features = ['int.rate', 'installment', 'log.annual.inc', 'dti', 'fico',
-                      'days.with.cr.line', 'revol.bal', 'revol.util',
-                      'inq.last.6mths', 'delinq.2yrs', 'pub.rec']
-categorical_features = ['purpose']
 
 
 # Налаштування Pipeline для обробки даних та моделі
@@ -102,9 +83,6 @@ def build_pipeline(numerical_features, categorical_features):
     return pipeline
 
 
-pipeline = build_pipeline(numerical_features, categorical_features)
-
-
 # Налаштування GridSearchCV для підбору параметрів
 def tune_model(pipeline, param_grid, X_train, y_train):
     """
@@ -124,18 +102,6 @@ def tune_model(pipeline, param_grid, X_train, y_train):
     return grid_search
 
 
-param_grid = {
-    'classifier__n_estimators': [50, 100, 200],
-    'classifier__max_depth': [5, 10, 20]
-}
-
-grid_search = tune_model(pipeline, param_grid, X_train, y_train)
-
-# Виведення найкращих параметрів і точності моделі
-print(f"\nНайкращі параметри: {grid_search.best_params_}")
-print(f"\nТочність на тестових даних: {grid_search.score(X_test, y_test)}")
-
-
 # Збереження найкращої моделі
 def save_model(model, filename):
     """
@@ -150,9 +116,6 @@ def save_model(model, filename):
     """
     joblib.dump(model, filename)
     print(f"\nМодель збережено у '{filename}'")
-
-
-save_model(grid_search.best_estimator_, 'loan_approval_model.pkl')
 
 
 # Обробка даних для аналізу кореляцій
@@ -177,12 +140,6 @@ def preprocess_for_analysis(pipeline, X_train, X_test, numerical_features, categ
     return df_train_preprocessed, X_test_preprocessed
 
 
-# Виклик функції
-df_train_preprocessed, X_test_preprocessed = preprocess_for_analysis(
-    grid_search.best_estimator_, X_train, X_test, numerical_features, categorical_features, y_train
-)
-
-
 # Важливість ознак
 def compute_feature_importance(model, numerical_features, categorical_features):
     """
@@ -204,10 +161,53 @@ def compute_feature_importance(model, numerical_features, categorical_features):
     return importance_df.sort_values(by='Importance', ascending=False)
 
 
-importance_df = compute_feature_importance(grid_search.best_estimator_, numerical_features, categorical_features)
+if __name__ == '__main__':
+    # Завантаження даних
+    df = pd.read_csv('loan_data.csv')
 
-# Візуалізація важливості ознак
-plot_correlation_matrix(df_train_preprocessed)
-plot_feature_importance(importance_df)
-plot_numerical_distributions(df, numerical_features)
-plot_numerical_vs_target(df, numerical_features)
+    # Виклик функції для аналізу даних
+    analyze_data(df)
+
+    # Розділення на ознаки та цільову змінну
+    X, y = split_data(df, 'not.fully.paid')
+
+    # Розділення на тренувальні та тестові дані
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Визначення числових та категоріальних ознак
+    numerical_features = ['int.rate', 'installment', 'log.annual.inc', 'dti', 'fico',
+                          'days.with.cr.line', 'revol.bal', 'revol.util',
+                          'inq.last.6mths', 'delinq.2yrs', 'pub.rec']
+    categorical_features = ['purpose']
+
+    # Створення pipeline
+    pipeline = build_pipeline(numerical_features, categorical_features)
+
+    # Налаштування GridSearchCV для підбору параметрів
+    param_grid = {
+        'classifier__n_estimators': [50, 100, 200],
+        'classifier__max_depth': [5, 10, 20]
+    }
+
+    grid_search = tune_model(pipeline, param_grid, X_train, y_train)
+
+    # Виведення найкращих параметрів і точності моделі
+    print(f"\nНайкращі параметри: {grid_search.best_params_}")
+    print(f"\nТочність на тестових даних: {grid_search.score(X_test, y_test)}")
+
+    # Збереження моделі
+    save_model(grid_search.best_estimator_, 'loan_approval_model.pkl')
+
+    # Підготовка даних для аналізу кореляцій
+    df_train_preprocessed, X_test_preprocessed = preprocess_for_analysis(
+        grid_search.best_estimator_, X_train, X_test, numerical_features, categorical_features, y_train
+    )
+
+    # Обчислення важливості ознак
+    importance_df = compute_feature_importance(grid_search.best_estimator_, numerical_features, categorical_features)
+
+    # Візуалізація важливості ознак
+    plot_correlation_matrix(df_train_preprocessed)
+    plot_feature_importance(importance_df)
+    plot_numerical_distributions(df, numerical_features)
+    plot_numerical_vs_target(df, numerical_features)

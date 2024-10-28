@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from .forms import LoanApprovalForm
 
-@login_required
+#@login_required
 def home(request):
     """
     Відображає домашню сторінку для зареєстрованих користувачів.
