@@ -8,11 +8,11 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <h2>Register</h2>
+    <h2>Реєстрація</h2>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Register</button>
+        <button type="submit">Реєстрація</button>
     </form>
     <a href="{% url 'admin:index' %}">Back to Admin</a>
 </body>

@@ -3,29 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loan Approval Form</title>
+    <title>Форма схвалення позики</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
 <body>
 <div>
-    <a href="{% url 'home' %}" class="button">Home</a> |
+    <a href="{% url 'home' %}" class="button">Головна</a> |
     <br>
     {% if user.is_authenticated %}
     <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
-        <button type="submit">Logout</button>
+        <button type="submit">Вихід</button>
     </form>
     {% else %}
     <br>
-    <label>You are logged in as a guest. Please log in to your profile</label>
+    <label>Ви увійшли як гість. Будь ласка, увійдіть у свій профіль</label>
     <br>
-    <a href="{% url 'login' %}">Login</a>
+    <a href="{% url 'login' %}">Вхід</a>
     <br>
     <br>
-    <label>or</label>
+    <label>або</label>
     <br>
-    <a href="{% url 'register' %}">Register</a>
+    <a href="{% url 'register' %}">Реєстрація</a>
     <br>
     {% endif %}
 </div>
